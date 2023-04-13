@@ -21,7 +21,7 @@ if __name__ == "__main__":
     folder_name, save_path = utils.get_folder_name()
     CFG['save_path'] = save_path
     # seed 설정
-    utils.set_seed(CFG['seed'])
+    pl.seed_everything(CFG['seed'])
 
     # --- Fit ---
     # load data and model

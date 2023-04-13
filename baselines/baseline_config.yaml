@@ -1,4 +1,4 @@
-admin: Kim GiBeom # 실험자 이름
+admin: Uijin Kim # 실험자 이름
 seed: 42
 train:
   model_name: klue/roberta-small

@@ -3,20 +3,16 @@ seed: 42
 train:
   model_name: klue/roberta-small
   batch_size: 64
-  epoch: 100
+  epoch: 1
   LR: 0.00001
   LossF: L1Loss
   optim: AdamW
   shuffle: True
   max_len: 200
 select_clean:
-  - example1
-  - example2
-  - example3
+  
 select_DA:
-  - example1
-  - example2
-  - example3
+  - swap_sentence
 focus_columns:
   - sentence_1
   - sentence_2

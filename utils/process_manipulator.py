@@ -1,7 +1,7 @@
 import pandas as pd
 from typing import List
 import utils
-import data_preprocessing
+import utils.data_preprocessing as dp
 
 
 class SequentialCleaning:
@@ -28,10 +28,11 @@ class SequentialCleaning:
         Returns:
             pd.DataFrame
         """
-        method_package_name = "data_preprocessing."
-        for method in self.cleaning_list:
-            cleaning_method = eval(method_package_name + method)
-            df = cleaning_method(df)
+        method_package_name = "dp."
+        if self.cleaning_list:
+            for method in self.cleaning_list:
+                cleaning_method = eval(method_package_name + method)
+                df = cleaning_method(df)
 
         return df
 
@@ -60,13 +61,14 @@ class SequentialAugmentation:
         Returns:
             pd.DataFrame
         """
-        method_package_name = "data_preprocessing."
+        method_package_name = "dp."
         # augmentation으로 만든 데이터를 또 augmentation하지 않기 위해 augmented_df에 따로 저장합니다.
-        augmented_df = pd.DataFrame(columns=df.columns)
-        for method in self.augmentation_list:
-            augmentation_method = eval(method_package_name + method)
-            augmented_df = pd.concat([augmented_df, augmentation_method(df)])
-        df = pd.concat([df, augmented_df])
+        if self.augmentation_list:
+            augmented_df = pd.DataFrame(columns=df.columns)
+            for method in self.augmentation_list:
+                augmentation_method = eval(method_package_name + method)
+                augmented_df = pd.concat([augmented_df, augmentation_method(df)])
+            df = pd.concat([df, augmented_df])
 
         return df
 

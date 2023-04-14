@@ -5,6 +5,7 @@ import pytorch_lightning as pl
 
 from tqdm.auto import tqdm
 from torch.utils.data import Dataset, DataLoader
+from utils.process_manipulator import SequentialCleaning as SC, SequentialAugmentation as SA
 
 class Dataset(Dataset):
     def __init__(self, inputs, targets=[]):
@@ -21,7 +22,7 @@ class Dataset(Dataset):
         return len(self.inputs)
 
 class Dataloader(pl.LightningDataModule):
-    def __init__(self, tokenizer, batch_size, shuffle):
+    def __init__(self, tokenizer, batch_size, shuffle, cleaning_list, augmentation_list):
         super(Dataloader, self).__init__()
         self.batch_size = batch_size
         self.shuffle = shuffle
@@ -40,6 +41,8 @@ class Dataloader(pl.LightningDataModule):
         self.tokenizer = tokenizer
         self.target_columns = ['label']
         self.text_columns = ['sentence_1', 'sentence_2']
+        self.cleaning_list = cleaning_list
+        self.augmentation_list = augmentation_list
 
     def tokenizing(self, df):
         data = []
@@ -52,7 +55,14 @@ class Dataloader(pl.LightningDataModule):
         
         return data
 
-    def preprocessing(self, data):
+    def preprocessing(self, data, train=False):
+        sc = SC(self.cleaning_list)
+        sa = SA(self.augmentation_list)
+
+        data = sc.process(data)
+        if train: # train일 때만 augmentation을 합니다.
+            data = sa.process(data)
+        
         # 타겟 데이터 load
         try:
             targets = data[self.target_columns].values.tolist()
@@ -67,7 +77,7 @@ class Dataloader(pl.LightningDataModule):
     def setup(self, stage='fit'):
         if stage == 'fit':
             # 학습 데이터 준비
-            train_inputs, train_targets = self.preprocessing(self.train_df)
+            train_inputs, train_targets = self.preprocessing(self.train_df, train=True)
             # 검증 데이터 준비
             val_inputs, val_targets = self.preprocessing(self.val_df)
 

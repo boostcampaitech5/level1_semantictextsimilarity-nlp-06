@@ -16,7 +16,7 @@ class Model(pl.LightningModule):
             pretrained_model_name_or_path=self.model_name, num_labels=1)
         
         # Loss 계산을 위해 사용될 L1Loss를 호출
-        self.loss_func = torch.nn.L1Loss()
+        self.loss_func = torch.nn.MSELoss()
     
     def forward(self, x):    
         x = self.plm(x)['logits']

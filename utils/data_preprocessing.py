@@ -70,7 +70,23 @@ def spellcheck(df):
 
     return checked_df
 
+def synonym_replacement(df, n):
+    """
+    문장 내 단어를 유의어로 바꿔주는 함수입니다.
 
+    필요 라이브러리 :
+    pip install konlpy
+
+    Args:
+        df (pd.DataFrame): 원본 train data
+        n (int) : replacement를 할 단어의 개수
+
+    Returns:
+        pd.DataFrame    
+    """
+    
+
+    return
 
 # 전처리 코드 테스트
 if __name__ == "__main__":

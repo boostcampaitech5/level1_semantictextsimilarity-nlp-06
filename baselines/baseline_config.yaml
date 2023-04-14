@@ -4,7 +4,7 @@ train:
   model_name: klue/roberta-small
   batch_size: 32
   epoch: 300
-  LR: 0.0001
+  LR: 0.0000001
   LossF: L1Loss
   optim: AdamW
   shuffle: True

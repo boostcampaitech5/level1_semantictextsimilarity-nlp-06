@@ -21,7 +21,7 @@ if __name__ == "__main__":
     folder_name, save_path = utils.get_folder_name()
     CFG['save_path'] = save_path
     # seed 설정
-    utils.set_seed(CFG['seed'])
+    pl.seed_everything(CFG['seed'])
 
     # --- Fit ---
     # load data and model
@@ -31,13 +31,14 @@ if __name__ == "__main__":
 
     # set options
     # Earlystopping
-    early_stopping = EarlyStopping(monitor='val_loss', patience=5, mode='min')
+    # early_stopping = EarlyStopping(monitor='val_loss', patience=5, mode='min')
 
     # train and test
-    trainer = pl.Trainer(accelerator='gpu', 
+    trainer = pl.Trainer(accelerator='gpu',
                          max_epochs=CFG['train']['epoch'],
                          default_root_dir=save_path,
-                         callbacks = [early_stopping])
+                         log_every_n_steps=10)
+                        #  callbacks = [early_stopping])
     
     trainer.fit(model=model, datamodule=dataloader)
     trainer.test(model=model, datamodule=dataloader)

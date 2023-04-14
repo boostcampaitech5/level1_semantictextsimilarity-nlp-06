@@ -5,12 +5,13 @@
 # gitignore template for Jupyter Notebooks
 # website: http://jupyter.org/
 .*
+nohup.out
+results/
 data/
 .idea/
 .ipynb_checkpoints
 */.ipynb_checkpoints/*
 test/
-results/
 
 # IPython
 profile_default/

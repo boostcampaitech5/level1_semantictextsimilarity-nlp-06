@@ -12,6 +12,7 @@ data/
 .ipynb_checkpoints
 */.ipynb_checkpoints/*
 test/
+baselines/baseline_config.yaml
 
 # IPython
 profile_default/

@@ -1,9 +1,9 @@
 admin: JY # 실험자 이름
 seed: 42
 train:
-  model_name: klue/roberta-small
-  batch_size: 64
-  epoch: 1
+  model_name: snunlp/KR-ELECTRA-discriminator
+  batch_size: 32
+  epoch: 100
   LR: 0.00001
   LossF: L1Loss
   optim: AdamW
@@ -12,7 +12,7 @@ train:
 select_clean:
   
 select_DA:
-  - swap_sentence
+  
 focus_columns:
   - sentence_1
   - sentence_2

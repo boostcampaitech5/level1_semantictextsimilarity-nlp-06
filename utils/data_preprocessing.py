@@ -1,6 +1,7 @@
 import pandas as pd
 import utils
 from tqdm.auto import tqdm
+import re
 
 # spellceck
 from pykospacing import Spacing
@@ -48,8 +49,8 @@ def spellcheck(df):
     sen2 = []
 
     # 동일한 spacing 적용을 위해 공백을 제거합니다.
-    checked_df['sentence_1'] = checked_df['sentence_1'].str.replace(" ","")
-    checked_df['sentence_2'] = checked_df['sentence_2'].str.replace(" ","")
+    checked_df['sentence_1'] = checked_df['sentence_1'].str.replace(pat=r'[^ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z0-9//?.,;:|*~`!^/-_+<>@/#$%&/=]+', repl=r'', regex=True)
+    checked_df['sentence_2'] = checked_df['sentence_2'].str.replace(pat=r'[^ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z0-9//?.,;:|*~`!^/-_+<>@/#$%&/=]+', repl=r'', regex=True)
 
     # spacing을 적용합니다.
     for i in tqdm(range(len(checked_df)), desc='spacing'):
@@ -69,6 +70,23 @@ def spellcheck(df):
     checked_df['sentence_2'] = sen2
 
     return checked_df
+
+def synonym_replacement(df, n):
+    """
+    문장 내 단어를 유의어로 바꿔주는 함수입니다.
+
+    필요 라이브러리 :
+
+    Args:
+        df (pd.DataFrame): 원본 train data
+        n (int) : replacement를 할 단어의 개수
+
+    Returns:
+        pd.DataFrame    
+    """
+    
+
+    return
 
 # 전처리 코드 테스트
 if __name__ == "__main__":

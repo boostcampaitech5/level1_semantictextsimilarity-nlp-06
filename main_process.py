@@ -31,7 +31,7 @@ if __name__ == "__main__":
 
     # set options
     # Earlystopping
-    # early_stopping = EarlyStopping(monitor='val_loss', patience=5, mode='min')
+    early_stopping = EarlyStopping(monitor='val_loss', patience=5, mode='min')
 
     # train and test
     trainer = pl.Trainer(accelerator='gpu',

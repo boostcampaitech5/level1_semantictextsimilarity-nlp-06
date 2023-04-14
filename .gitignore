@@ -12,7 +12,6 @@ data/
 .ipynb_checkpoints
 */.ipynb_checkpoints/*
 test/
-baselines/baseline_config.yaml
 
 # IPython
 profile_default/
@@ -20,6 +19,9 @@ ipython_config.py
 
 # Remove previous ipynb_checkpoints
 #   git rm -r .ipynb_checkpoints/
+
+#config
+baselines/baseline_config.yaml
 
 #wandb
 wandb/

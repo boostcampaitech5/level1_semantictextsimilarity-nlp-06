@@ -10,7 +10,7 @@ data/
 .ipynb_checkpoints
 */.ipynb_checkpoints/*
 test/
-lightning_logs/
+results/
 
 # IPython
 profile_default/

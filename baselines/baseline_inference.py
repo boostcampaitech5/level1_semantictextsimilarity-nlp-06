@@ -186,7 +186,7 @@ if __name__ == '__main__':
                             args.test_path, args.predict_path)
 
     # gpu가 없으면 accelerator='cpu', 있으면 accelerator='gpu'
-    trainer = pl.Trainer(accelerator='cpu', max_epochs=args.max_epoch, log_every_n_steps=1)
+    trainer = pl.Trainer(accelerator='gpu', max_epochs=args.max_epoch, log_every_n_steps=1)
 
     # Inference part
     # 저장된 모델로 예측을 진행합니다.

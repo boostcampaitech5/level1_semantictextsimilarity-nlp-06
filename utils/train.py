@@ -1,8 +1,10 @@
 import torch
+import pandas as pd
 from utils import utils
-import utils.data_preprocessing as dp
+import utils.data_preprocessing as DP
 import pytorch_lightning as pl
 
+from sklearn.model_selection import train_test_split
 from tqdm.auto import tqdm
 from torch.utils.data import Dataset, DataLoader
 from utils.process_manipulator import SequentialCleaning as SC, SequentialAugmentation as SA
@@ -22,15 +24,20 @@ class Dataset(Dataset):
         return len(self.inputs)
 
 class Dataloader(pl.LightningDataModule):
-    def __init__(self, tokenizer, batch_size, shuffle, cleaning_list, augmentation_list):
+    def __init__(self, tokenizer, CFG):
         super(Dataloader, self).__init__()
-        self.batch_size = batch_size
-        self.shuffle = shuffle
-
+        self.batch_size = CFG['train']['batch_size']
+        self.shuffle = CFG['train']['shuffle']
+        self.seed = CFG['seed']
+        self.admin = CFG['admin']
+        
         train_df, val_df, predict_df = utils.get_data()
-
-        self.train_df = train_df
-        self.val_df = val_df
+        # 김기범이고 df_split이 True라면 데이터셋을 다시 분리
+        if self.admin == 'KGB':
+            self.train_df = pd.concat([train_df, val_df], axis=0)
+        else:
+            self.train_df = train_df
+            self.val_df = val_df
         self.predict_df = predict_df # test.csv
 
         self.train_dataset = None
@@ -40,9 +47,9 @@ class Dataloader(pl.LightningDataModule):
 
         self.tokenizer = tokenizer
         self.target_columns = ['label']
-        self.text_columns = ['sentence_1', 'sentence_2']
-        self.cleaning_list = cleaning_list
-        self.augmentation_list = augmentation_list
+        self.text_columns = ['sentence_1', 'sentence_2'] 
+        self.cleaning_list = CFG['select_clean']
+        self.augmentation_list = CFG['select_DA']
 
     def tokenizing(self, df):
         data = []
@@ -78,8 +85,15 @@ class Dataloader(pl.LightningDataModule):
         if stage == 'fit':
             # 학습 데이터 준비
             train_inputs, train_targets = self.preprocessing(self.train_df, train=True)
+            
             # 검증 데이터 준비
-            val_inputs, val_targets = self.preprocessing(self.val_df)
+            if self.admin == 'KGB':
+                train_inputs, val_inputs, train_targets, val_targets = train_test_split(train_inputs, train_targets, 
+                                                                                        test_size=0.055, 
+                                                                                        stratify=train_targets, 
+                                                                                        random_state=self.seed)
+            else:
+                val_inputs, val_targets = self.preprocessing(self.val_df)
 
             self.train_dataset = Dataset(train_inputs, train_targets)
             self.val_dataset = Dataset(val_inputs, val_targets)

@@ -10,13 +10,14 @@ class Model(pl.LightningModule):
         
         self.model_name = CFG['train']['model_name']
         self.lr = CFG['train']['LR']
+        loss_name = "torch.nn." + CFG['train']['LossF']
+        optim_name = "torch.optim." + CFG['train']['optim']
         
         # 사용할 모델을 호출
         self.plm = transformers.AutoModelForSequenceClassification.from_pretrained(
             pretrained_model_name_or_path=self.model_name, num_labels=1)
-        
-        # Loss 계산을 위해 사용될 L1Loss를 호출
-        self.loss_func = torch.nn.MSELoss()
+        self.loss_func = eval(loss_name)()
+        self.optim = eval(optim_name)
     
     def forward(self, x):    
         x = self.plm(x)['logits']
@@ -54,5 +55,5 @@ class Model(pl.LightningModule):
         return logits.squeeze()
 
     def configure_optimizers(self):
-        optimizer = torch.optim.AdamW(self.parameters(), lr=self.lr)
+        optimizer = self.optim(self.parameters(), lr=self.lr)
         return optimizer

@@ -1,5 +1,7 @@
 import pandas as pd
 import utils
+import random
+
 from tqdm.auto import tqdm
 
 # spellceck
@@ -8,10 +10,53 @@ from symspellpy_ko import KoSymSpell, Verbosity
 from koeda import SR, RI, RS, RD
 
 def remove_special_word(df):
+    """
+    특수문자를 제거하는 메소드
+    """
     df['sentence_1'] = df['sentence_1'].str.replace(pat=r'[^\w]', repl=r' ', regex=True)
     df['sentence_2'] = df['sentence_2'].str.replace(pat=r'[^\w]', repl=r' ', regex=True)
 
     return df
+
+
+def random_deletion(df):
+    """
+    apply로 실행시켜야 함
+    k개의 워드를 랜덤으로 삭제 기법 (일단 k=1) -> 나중에 보유 문장 길이에 따라 동적으로 변경시킬 예정
+    조합 3개 (ww표시가 전처리 된 거)
+    1. sen_1, sen_2ww
+    2. sen_1ww, sen_2
+    3. sen_1ww, sen_3ww
+    """
+    def func(x):
+        x = x.split()
+        random_item = random.choice(x)
+        x.remove(random_item)
+
+        return ' '.join(x)
+    
+    sen_1ww = df['sentence_1'] = df['sentence_1'].apply(lambda x: func(x)).values.tolist()
+    sen_2ww = df['sentence_2'] = df['sentence_2'].apply(lambda x: func(x)).values.tolist()
+
+    sen_1, sen_2 = [], []
+    labels = [label for _ in range(3) for label in df['label']] if 'label' in df.columns else []
+
+    # 1
+    sen_1.extend(df['sentence_1'].values.tolist())
+    sen_2.extend(sen_2ww)
+    # 2
+    sen_1.extend(sen_1ww)
+    sen_2.extend(df['sentence_2'].values.tolist())
+    # 3
+    sen_1.extend(sen_1ww)
+    sen_2.extend(sen_2ww)
+
+    new_df = pd.DataFrame()
+    new_df['sentence_1'] = sen_1
+    new_df['sentence_2'] = sen_2
+    if labels: new_df['label'] = labels
+
+    return new_df
 
 def swap_sentence(df:pd.DataFrame) -> pd.DataFrame:
     """
@@ -184,3 +229,11 @@ if __name__ == "__main__":
     print("전처리 전", train_df.head(5), sep='\n')
     print('-'*30)
     print("전처리 후", preprocessed_df.head(5), sep='\n')
+
+    random_deletion_df = random_deletion(train_df)
+    print('-'*30)
+    print('random deletion 전,', train_df.shape)
+    print('random deletion 후,', random_deletion_df.shape)
+    new_df = pd.concat([train_df, random_deletion_df], axis=0)
+    print(new_df.shape)
+    print('-'*30)

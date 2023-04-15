@@ -1,18 +1,17 @@
-admin: JY # 실험자 이름
+admin: KGB # 실험자 이름
+patience: 5
 seed: 42
 train:
   model_name: snunlp/KR-ELECTRA-discriminator
-  batch_size: 32
+  batch_size: 16
   epoch: 100
   LR: 0.00001
-  LossF: L1Loss
+  LossF: MSELoss
   optim: AdamW
   shuffle: True
   max_len: 200
 select_clean:
-  
+  - remove_special_word
 select_DA:
-  
-focus_columns:
-  - sentence_1
-  - sentence_2
+  - swap_sentence
+  # - random_deletion

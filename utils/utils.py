@@ -10,10 +10,11 @@ from datetime import timezone
 from datetime import timedelta
 
 
-def get_folder_name():
+def get_folder_name(CFG):
     now = datetime.now(tz=timezone(timedelta(hours=9)))
-    folder_name = now.strftime('%Y-%m-%d-%H:%M:%S')
-    save_path = f'./results/{folder_name}'
+    folder_name = now.strftime('%Y-%m-%d-%H:%M:%S') + f"_{CFG['admin']}"
+    save_path = f"./results/{folder_name}"
+    CFG['save_path'] = save_path
     os.makedirs(save_path)
 
     return folder_name, save_path
